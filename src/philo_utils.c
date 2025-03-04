@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:45:24 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/03 06:56:29 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/04 20:37:23 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	grab_forks(t_data *data, t_philo *philo)
 	pthread_mutex_lock(&philo->fork);
 	print_status(data, philo, FORK);
 	if (data->num_of_philo == 1)
-		return (ft_usleep(data->time_to_die));
+		return (ft_usleep(data->time_to_die + 1));
 	pthread_mutex_lock(&philo->next->fork);
 	print_status(data, philo, FORK);
 }
@@ -128,7 +128,7 @@ int	philo_last_eat(t_data *data, t_philo *philo)
 		pthread_mutex_lock(&data->is_dead_lock);
 		data->is_dead = 1;
 		pthread_mutex_unlock(&data->is_dead_lock);
-	//	ft_usleep(1000);
+		//ft_usleep(1000);
 		time = get_time() - data->start_time;
 		printf("%ld %d died\n", time, philo->id);
 		return (1);
@@ -139,20 +139,20 @@ int	philo_last_eat(t_data *data, t_philo *philo)
 void	clean_up(t_data *data)
 {
 	t_philo	*philo;
+	t_philo *temp;
 
 	philo = data->first;
-	while (1)
+	data->last->next = NULL;
+	while (philo)
 	{
 		if (pthread_mutex_destroy(&philo->fork) != 0)
 			error_exit("Mutex destroy failed");
 		if (pthread_mutex_destroy(&philo->last_eat_lock) != 0)
 			error_exit("Mutex destroy failed");
-		if (philo->next == data->last)
-			break;
-		philo = philo->next;
-		free(philo->prev);
+		temp = philo->next;
+		free(philo);
+		philo = temp;
 	}
-	free(data->last);
 	if (pthread_mutex_destroy(&data->is_dead_lock) != 0)
 		error_exit("Mutex destroy failed");
 	if (data->num_of_must_eat != -1
@@ -160,5 +160,4 @@ void	clean_up(t_data *data)
 		error_exit("Mutex destroy failed");
 	if (pthread_mutex_destroy(&data->print_mutex) != 0)
 		error_exit("Mutex destroy failed");
-	free(data);
 }

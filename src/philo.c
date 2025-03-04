@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:44:59 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/03 06:54:51 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/03 21:59:33 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	join_philo(t_data *data)
 	philo = data->first;
 	while (1)
 	{
-		pthread_join(philo->id, NULL);
+		if(pthread_join(philo->philo_id, NULL) != 0)
+			error_exit("Join failed");
 		philo = philo->next;
 		if (philo == data->first)
 			break;
@@ -101,11 +102,9 @@ int	create_philo(t_data *data, t_philo *philo)
 		philo->next = memset(malloc(sizeof(t_philo)), 0, sizeof(t_philo));
 		if (!philo->next)
 			error_exit("Malloc failed");
-		philo->next->prev = philo;
 		philo = philo->next;
 	}
 	philo->next = data->first;
-	data->first->prev = philo;
 	data->last = philo;
 	return (0);
 }
@@ -167,6 +166,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (monitoring(&data))
 	 	return (1);
+	printf("Start cleaning up\n");
 	clean_up(&data);
 	return (0);
 }

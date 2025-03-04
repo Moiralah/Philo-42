@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:51:29 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/03 06:56:35 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/03 19:19:33 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ typedef struct s_philo
 	int				full_check;
 	struct s_data	*data;
 	struct s_philo	*next;
-	struct s_philo	*prev;
 }					t_philo;
 
 typedef struct s_data
