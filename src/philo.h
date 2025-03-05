@@ -6,13 +6,12 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:51:29 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/03 19:19:33 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 04:12:21 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
-
 # include <pthread.h>
 # include <stdio.h>
 # include <string.h>
@@ -50,7 +49,7 @@ typedef struct s_data
 	t_philo			*last;
 }					t_data;
 
-enum life
+enum e_life
 {
 	FORK,
 	EAT,
@@ -58,26 +57,28 @@ enum life
 	THINK,
 };
 
-void	error_exit(char *msg);
-void	ft_usleep(size_t time);
-size_t	get_time(void);
-int		ft_argtoi(const char *str);
-int		init_data(t_data *data, int argc, char **argv);
-int		create_philo(t_data *data, t_philo *philo);
+// philo.c
 void	*philo_life(void *arg);
 int		living(t_data *data);
 void	join_philo(t_data *data);
 int		monitoring(t_data *data);
-int 	validate_args(char **argv);
-int		print_status(t_data *data, t_philo *philo, int num);
+// philo_action.c
 void	grab_forks(t_data *data, t_philo *philo);
 void	put_forks(t_data *data, t_philo *philo);
 void	philo_eat(t_data *data, t_philo *philo);
-void	philo_sleep(t_data *data, t_philo *philo);
-void	philo_think(t_data *data, t_philo *philo);
-int		philo_die(t_data *data);
 int		philo_last_eat(t_data *data, t_philo *philo);
+int		philo_die(t_data *data);
+// philo_utils.c
+int		create_philo(t_data *data, t_philo *philo);
+int		init_data(t_data *data, int argc, char **argv);
+int		print_status(t_data *data, t_philo *philo, int num);
 void	clean_up(t_data *data);
+// utils.c
+int		validate_args(char **argv);
+int		ft_argtoi(const char *str);
+void	error_exit(char *msg);
+void	ft_usleep(size_t time);
+size_t	get_time(void);
 
 // ◦ timestamp_in_ms X has taken a fork
 // ◦ timestamp_in_ms X is eating

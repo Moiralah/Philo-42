@@ -6,27 +6,59 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:45:24 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/04 20:37:23 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 03:59:55 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo.h"
 
-void	ft_usleep(size_t time)
+int	create_philo(t_data *data, t_philo *philo)
 {
-	size_t	start;
+	int		i;
 
-	start = get_time();
-	while (get_time() - start < time)
-		usleep(100);
+	i = 0;
+	while (++i <= data->num_of_philo)
+	{
+		philo->id = i;
+		if (pthread_mutex_init(&philo->fork, NULL) != 0)
+			return (1);
+		if (pthread_mutex_init(&philo->last_eat_lock, NULL) != 0)
+			return (1);
+		philo->data = data;
+		if (i == data->num_of_philo)
+			break ;
+		philo->next = memset(malloc(sizeof(t_philo)), 0, sizeof(t_philo));
+		if (!philo->next)
+			error_exit("Malloc failed");
+		philo = philo->next;
+	}
+	philo->next = data->first;
+	data->last = philo;
+	return (0);
 }
 
-size_t	get_time(void)
+int	init_data(t_data *data, int argc, char **argv)
 {
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+	data->num_of_philo = ft_argtoi(argv[1]);
+	data->time_to_die = ft_argtoi(argv[2]);
+	data->time_to_eat = ft_argtoi(argv[3]);
+	data->time_to_sleep = ft_argtoi(argv[4]);
+	if (argc == 6)
+	{
+		data->num_of_must_eat = ft_argtoi(argv[5]);
+		if (pthread_mutex_init(&data->full_lock, NULL) != 0)
+			return (1);
+	}
+	else
+		data->num_of_must_eat = -1;
+	data->full_philo = 0;
+	data->is_dead = 0;
+	data->start_time = get_time();
+	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&data->is_dead_lock, NULL) != 0)
+		return (1);
+	return (0);
 }
 
 int	print_status(t_data *data, t_philo *philo, int num)
@@ -49,97 +81,10 @@ int	print_status(t_data *data, t_philo *philo, int num)
 	return (0);
 }
 
-void	grab_forks(t_data *data, t_philo *philo)
-{
-	pthread_mutex_lock(&philo->fork);
-	print_status(data, philo, FORK);
-	if (data->num_of_philo == 1)
-		return (ft_usleep(data->time_to_die + 1));
-	pthread_mutex_lock(&philo->next->fork);
-	print_status(data, philo, FORK);
-}
-
-void	put_forks(t_data *data, t_philo *philo)
-{
-	pthread_mutex_unlock(&philo->fork);
-	if (data->num_of_philo == 1)
-		return ;
-	pthread_mutex_unlock(&philo->next->fork);
-}
-
-void	philo_eat(t_data *data, t_philo *philo)
-{
-	grab_forks(data, philo);
-	if (print_status(data, philo, EAT) == 1)
-		return (put_forks(data, philo));
-	pthread_mutex_lock(&philo->last_eat_lock);
-	philo->last_eat_time = get_time();
-	pthread_mutex_unlock(&philo->last_eat_lock);
-	ft_usleep(data->time_to_eat);
-	philo->must_eat++;
-	if (data->num_of_must_eat != -1 && philo->full_check == 0
-		&& philo->must_eat == data->num_of_must_eat)
-	{
-		pthread_mutex_lock(&data->full_lock);
-		data->full_philo++;
-		pthread_mutex_unlock(&data->full_lock);
-		philo->full_check = 1;
-	}
-	put_forks(data, philo);
-	return ;
-}
-
-void	philo_sleep(t_data *data, t_philo *philo)
-{
-	print_status(data, philo, SLEEP);
-	ft_usleep(data->time_to_sleep);
-}
-
-void	philo_think(t_data *data, t_philo *philo)
-{
-	print_status(data, philo, THINK);
-}
-
-int	philo_die(t_data *data)
-{
-	pthread_mutex_lock(&data->is_dead_lock);
-	if (data->is_dead == 1)
-		return (pthread_mutex_unlock(&data->is_dead_lock), 1);
-	pthread_mutex_unlock(&data->is_dead_lock);
-	if (data->num_of_must_eat == -1)
-		return (0);
-	pthread_mutex_lock(&data->full_lock);
-	if (data->full_philo == data->num_of_must_eat)
-		return (pthread_mutex_unlock(&data->full_lock), 1);
-	pthread_mutex_unlock(&data->full_lock);
-	return (0);
-}
-
-int	philo_last_eat(t_data *data, t_philo *philo)
-{
-	size_t	time;
-	size_t	time_diff;
-
-	pthread_mutex_lock(&philo->last_eat_lock);
-	time_diff = get_time() - philo->last_eat_time;
-	pthread_mutex_unlock(&philo->last_eat_lock);
-	if (time_diff > data->time_to_die)
-	{
-		pthread_mutex_lock(&data->is_dead_lock);
-		data->is_dead = 1;
-		pthread_mutex_unlock(&data->is_dead_lock);
-		//ft_usleep(1000);
-		time = get_time() - data->start_time;
-		printf("%ld %d died\n", time, philo->id);
-		return (1);
-	}
-	return (0);
-}
-
 void	clean_up(t_data *data)
 {
 	t_philo	*philo;
-	t_philo *temp;
+	t_philo	*temp;
 
 	philo = data->first;
 	data->last->next = NULL;
