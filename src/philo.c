@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:44:59 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 03:59:33 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 05:06:39 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ int	monitoring(t_data *data)
 {
 	t_philo	*philo;
 
-	if (living(data))
-		return (1);
 	if (data->num_of_must_eat == 0)
 		return (printf("No eating. Philo hangry.\n"), 0);
+	if (living(data))
+		return (1);
 	philo = data->first;
 	while (1)
 	{

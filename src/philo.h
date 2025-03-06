@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:51:29 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 04:12:21 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 05:21:07 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <limits.h>
 # include <sys/time.h>
 
 typedef struct s_philo
@@ -39,10 +40,9 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				num_of_must_eat;
+	int				is_dead;
 	int				full_philo;
 	pthread_mutex_t	full_lock;
-	int				is_dead;
-	pthread_mutex_t	is_dead_lock;
 	size_t			start_time;
 	pthread_mutex_t	print_mutex;
 	t_philo			*first;

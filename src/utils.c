@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 19:25:36 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 03:37:20 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 23:54:47 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,16 @@ int	validate_args(char **argv)
 {
 	int	i;
 
-	i = 0;
-	while (argv[++i] != NULL)
-		ft_argtoi(argv[i]);
-	if (ft_argtoi(argv[1]) > 200)
-		error_exit("Too much philo");
+	i = 5;
+	while (--i > 1)
+	{
+		if (ft_argtoi(argv[i]) < 60)
+			error_exit("Philo need time to be alive");
+	}
+	if (ft_argtoi(argv[1]) > 200 || ft_argtoi(argv[1]) < 1)
+		error_exit("Philo number must be between 1-200");
+	if (argv[5] && ft_argtoi(argv[5]) < 0)
+		error_exit("Invalid amount");
 	return (0);
 }
 
@@ -41,9 +46,14 @@ int	ft_argtoi(const char *str)
 		error_exit("Only digits are allowed");
 	while (str[i] >= '0' && str[i] <= '9')
 	{
+		if (num > INT_MAX / 10 || (num == INT_MAX / 10
+				&& (str[i] - '0') > INT_MAX % 10))
+			error_exit("Number too large");
 		num = num * 10 + str[i] - '0';
 		i++;
 	}
+	if (str[i] != '\0')
+		error_exit("Only digits are allowed");
 	return (num);
 }
 

@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 03:37:54 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 03:58:44 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/06 04:29:31 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ int	philo_last_eat(t_data *data, t_philo *philo)
 	pthread_mutex_unlock(&philo->last_eat_lock);
 	if (time_diff > data->time_to_die)
 	{
-		pthread_mutex_lock(&data->is_dead_lock);
 		data->is_dead = 1;
-		pthread_mutex_unlock(&data->is_dead_lock);
 		printf("%ld %d died\n", get_time() - data->start_time, philo->id);
 		return (1);
 	}
@@ -72,10 +70,8 @@ int	philo_last_eat(t_data *data, t_philo *philo)
 
 int	philo_die(t_data *data)
 {
-	pthread_mutex_lock(&data->is_dead_lock);
 	if (data->is_dead == 1)
-		return (pthread_mutex_unlock(&data->is_dead_lock), 1);
-	pthread_mutex_unlock(&data->is_dead_lock);
+		return (1);
 	if (data->num_of_must_eat == -1)
 		return (0);
 	pthread_mutex_lock(&data->full_lock);
