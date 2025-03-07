@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:44:59 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 05:06:39 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/07 19:34:46 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	living(t_data *data)
 		if (philo == data->first)
 			break ;
 	}
+//	if (philo_die(data) == 1)
+//		free(philo);
 	return (0);
 }
 
@@ -58,6 +60,21 @@ void	join_philo(t_data *data)
 	{
 		if (pthread_join(philo->philo_id, NULL) != 0)
 			error_exit("Join failed");
+		philo = philo->next;
+		if (philo == data->first)
+			break ;
+	}
+}
+
+void	detach_philo(t_data *data)
+{
+	t_philo	*philo;
+
+	philo = data->first;
+	while (1)
+	{
+		if (pthread_detach(philo->philo_id) != 0)
+			error_exit("Detach failed");
 		philo = philo->next;
 		if (philo == data->first)
 			break ;
@@ -82,7 +99,10 @@ int	monitoring(t_data *data)
 			&& data->full_philo == data->num_of_philo)
 			break ;
 	}
-	join_philo(data);
+	if (philo_die(data) == 1)
+		detach_philo(data);
+	else
+		join_philo(data);
 	return (0);
 }
 
