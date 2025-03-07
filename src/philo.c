@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:44:59 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/07 19:34:46 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/07 23:42:11 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,26 @@ void	*philo_life(void *arg)
 {
 	t_philo	*philo;
 	t_data	*data;
+	size_t	time_check;
 
 	philo = arg;
 	data = philo->data;
+	time_check = data->time_to_eat + data->time_to_sleep;
 	if (philo->id % 2 == 0)
-		ft_usleep(100);
+	{
+		if (data->time_to_eat > data->time_to_die)
+			ft_usleep(data->time_to_die + 1);
+		else
+			ft_usleep(data->time_to_eat);
+	}
 	while (philo_die(data) == 0)
 	{
 		philo_eat(data, philo);
 		print_status(data, philo, SLEEP);
-		ft_usleep(data->time_to_sleep);
+		if (time_check > data->time_to_die)
+			ft_usleep(data->time_to_die + 1);
+		else
+			ft_usleep(data->time_to_sleep);
 		print_status(data, philo, THINK);
 	}
 	return (NULL);
@@ -46,8 +56,6 @@ int	living(t_data *data)
 		if (philo == data->first)
 			break ;
 	}
-//	if (philo_die(data) == 1)
-//		free(philo);
 	return (0);
 }
 
@@ -60,21 +68,6 @@ void	join_philo(t_data *data)
 	{
 		if (pthread_join(philo->philo_id, NULL) != 0)
 			error_exit("Join failed");
-		philo = philo->next;
-		if (philo == data->first)
-			break ;
-	}
-}
-
-void	detach_philo(t_data *data)
-{
-	t_philo	*philo;
-
-	philo = data->first;
-	while (1)
-	{
-		if (pthread_detach(philo->philo_id) != 0)
-			error_exit("Detach failed");
 		philo = philo->next;
 		if (philo == data->first)
 			break ;
@@ -99,10 +92,7 @@ int	monitoring(t_data *data)
 			&& data->full_philo == data->num_of_philo)
 			break ;
 	}
-	if (philo_die(data) == 1)
-		detach_philo(data);
-	else
-		join_philo(data);
+	join_philo(data);
 	return (0);
 }
 

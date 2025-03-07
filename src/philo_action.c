@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 03:37:54 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/06 04:29:31 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/07 23:41:16 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ void	philo_eat(t_data *data, t_philo *philo)
 	pthread_mutex_lock(&philo->last_eat_lock);
 	philo->last_eat_time = get_time();
 	pthread_mutex_unlock(&philo->last_eat_lock);
-	ft_usleep(data->time_to_eat);
+	if (data->time_to_eat > data->time_to_die)
+		ft_usleep(data->time_to_die + 1);
+	else
+		ft_usleep(data->time_to_eat);
 	philo->must_eat++;
 	if (data->num_of_must_eat != -1 && philo->full_check == 0
 		&& philo->must_eat == data->num_of_must_eat)

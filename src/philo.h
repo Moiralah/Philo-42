@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:51:29 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/07 20:44:21 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/07 21:50:09 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,10 @@ typedef struct s_data
 {
 	int				num_of_philo;
 	size_t			time_to_die;
-	int				time_to_eat;
+	size_t			time_to_eat;
 	int				time_to_sleep;
 	int				num_of_must_eat;
 	int				is_dead;
-	int				active_th;
-	pthread_mutex_t	active_th_lock;
-	pthread_cond_t	sig_th_done;
 	int				full_philo;
 	pthread_mutex_t	full_lock;
 	size_t			start_time;
@@ -65,7 +62,6 @@ void	*philo_life(void *arg);
 int		living(t_data *data);
 void	join_philo(t_data *data);
 int		monitoring(t_data *data);
-void	detach_philo(t_data *data);
 // philo_action.c
 void	grab_forks(t_data *data, t_philo *philo);
 void	put_forks(t_data *data, t_philo *philo);

@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:45:24 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/07 19:24:32 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/07 21:39:30 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,10 @@ void	clean_up(t_data *data)
 	data->last->next = NULL;
 	while (philo)
 	{
-		if (philo_die(data) == 0)
-		{
-			if (pthread_mutex_destroy(&philo->fork) != 0)
-				error_exit("Mutex destroy failed");
-			if (pthread_mutex_destroy(&philo->last_eat_lock) != 0)
-				error_exit("Mutex destroy failed");
-		}
+		if (pthread_mutex_destroy(&philo->fork) != 0)
+			error_exit("Mutex destroy failed");
+		if (pthread_mutex_destroy(&philo->last_eat_lock) != 0)
+			error_exit("Mutex destroy failed");
 		temp = philo->next;
 		free(philo);
 		philo = temp;
