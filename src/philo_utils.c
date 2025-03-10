@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:45:24 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/07 21:39:30 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/11 01:29:47 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ int	init_data(t_data *data, int argc, char **argv)
 	data->start_time = get_time();
 	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
 		return (1);
+	if (pthread_mutex_init(&data->is_dead_lock, NULL) != 0)
+		return (1);
 	return (0);
 }
 
@@ -100,5 +102,7 @@ void	clean_up(t_data *data)
 		&& pthread_mutex_destroy(&data->full_lock) != 0)
 		error_exit("Mutex destroy failed");
 	if (pthread_mutex_destroy(&data->print_mutex) != 0)
+		error_exit("Mutex destroy failed");
+	if (pthread_mutex_destroy(&data->is_dead_lock) != 0)
 		error_exit("Mutex destroy failed");
 }

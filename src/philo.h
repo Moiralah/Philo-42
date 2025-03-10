@@ -6,7 +6,7 @@
 /*   By: huidris <huidris@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:51:29 by huidris           #+#    #+#             */
-/*   Updated: 2025/03/07 21:50:09 by huidris          ###   ########.fr       */
+/*   Updated: 2025/03/11 01:23:45 by huidris          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				num_of_must_eat;
 	int				is_dead;
+	pthread_mutex_t	is_dead_lock;
 	int				full_philo;
 	pthread_mutex_t	full_lock;
 	size_t			start_time;
